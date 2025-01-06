@@ -9,12 +9,13 @@ class Helper:
 
     def create_linear_dataset(
         self,
+        *,
         title: str,
         num_samples: int = 250,
         x_range: int = 500,
         x_min: int = 0,
         slope: int = 2,
-        intercept: int = 3,
+        intercept: int = 0,
         noise: int = 200,
     ):
         """
@@ -34,15 +35,15 @@ class Helper:
             title: title of the dataset
         """
         # Set seed for reproducibility
-        np.random.seed(self.rng.integers(0, 1000))
+        np.random.seed(int(self.rng.integers(0, 1000)))
         # Create a random x values within the range of x_range and x_min
-        x = np.random.rand(num_samples, 1) * x_range + x_min
+        x = np.random.rand(num_samples) * x_range + x_min
         # Create a linear y values
-        y = slope * x + intercept + np.random.randn(num_samples, 1) * noise
+        y = x * slope + np.random.randn(num_samples) * noise
         # Return the x, y and title
         return (x, y, title)
     
-    def plot_dataset(self, x, y, title):
+    def plot_dataset(self, title, x, y):
         """
         Plot the dataset
         Parameters:
@@ -58,7 +59,7 @@ class Helper:
         plt.legend()
         plt.show()
         
-    def plot_dataset_with_hypothesis(self, x, y, y_pred, slope, intercept, title):
+    def plot_dataset_with_hypothesis(self, title, x, y, y_pred, slope, intercept):
         """
         Plot the dataset with hypothesis
         Parameters:
@@ -67,7 +68,7 @@ class Helper:
             title: title of the dataset
             hypothesis: hypothesis
         """
-        plt.figure(figsize=(10, 6))
+        plt.figure(figsize=(8, 6))
         plt.scatter(x, y, color='blue', alpha=0.5, label="Data points")
         plt.plot(x, y_pred, color='red', label=f"Hypothesis: y = {slope:.2f}x + {intercept:.2f}") 
         plt.title(title)
@@ -165,6 +166,18 @@ class Helper:
             R-squared value
         """
         return self.r_squared(y_true, y_pred)
+    
+    def get_predictions(self, x, w):
+        """
+        Get predictions
+        Parameters:
+            x: x values
+            w: weights [slope, intercept]
+        Returns:
+            y_pred: predicted values
+        """
+        y_pred = w[0] * x + w[1]
+        return y_pred
 
     def simple_linear_regression(self, x, y):
         """
